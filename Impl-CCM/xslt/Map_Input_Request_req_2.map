@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?><mappingRoot xmlns="http://www.ibm.com/2008/ccl/Mapping" domainID="com.ibm.msl.mapping.xml" targetNamespace="http://Impl-CCM/xslt/Map_Input_Request_req_2" version="8.0.5.0" xmlns:map="http://Impl-CCM/xslt/Map_Input_Request_req_2">
+    <input correlationContext="" message="{http://Impl-CCMLibrary/SendCommunicationService}SendMessageRequestMsg" sharedContext="{http://Impl-CCMLibrary}CCMSharedBO" smoName="wsdl-primary" transientContext="" type="smo" types="" xpath="/"/>
+    <output correlationContext="" message="{http://Impl-CCMLibrary/SendCommunicationService}SendMessageRequestMsg" sharedContext="{http://Impl-CCMLibrary}CCMSharedBO" smoName="wsdl-primary" transientContext="" type="smo" types="" xpath="/"/>
+    <namespaces>
+        <namespace kind="supplement" prefix="io7" uri="http://www.ibm.com/xmlns/prod/websphere/mq/sca/6.0.0"/>
+        <namespace kind="supplement" prefix="io6" uri="http://www.ibm.com/websphere/sibx/smo/v6.0.1"/>
+        <namespace kind="supplement" prefix="io9" uri="http://Impl-CCMLibrary/SendCommunicationService"/>
+        <namespace kind="supplement" prefix="io8" uri="http://www.ibm.com/xmlns/prod/websphere/http/sca/6.1.0"/>
+        <namespace kind="supplement" prefix="io10" uri="wsdl.http://Impl-CCMLibrary/SendCommunicationService"/>
+        <namespace kind="supplement" prefix="io" uri="http://www.w3.org/2005/08/addressing"/>
+        <namespace kind="supplement" prefix="io3" uri="http://Impl-CCMLibrary"/>
+        <namespace kind="supplement" prefix="io2" uri="http://www.w3.org/2003/05/soap-envelope"/>
+        <namespace kind="supplement" prefix="io5" uri="http://schemas.xmlsoap.org/ws/2004/08/addressing"/>
+        <namespace kind="supplement" prefix="io4" uri="http://NBDATA"/>
+    </namespaces>
+    <generation engine="xslt2"/>
+    <mappingDeclaration name="Map_Input_Request_req_2">
+        <input namespace="http://www.ibm.com/websphere/sibx/smo/v6.0.1" path="smo"/>
+        <output namespace="http://www.ibm.com/websphere/sibx/smo/v6.0.1" path="smo"/>
+        <move>
+            <input path="body/SendMessage/SendMessageAisInput"/>
+            <output path="body/SendMessage/SendMessageAisInput"/>
+        </move>
+        <move>
+            <input path="body/SendMessage/SendMessageAisInput/loggingDetails/lob"/>
+            <output path="context/shared/lob"/>
+        </move>
+        <move>
+            <input path="body/SendMessage/SendMessageAisInput/loggingDetails/applicationNo"/>
+            <output path="context/shared/applicationNumber"/>
+        </move>
+        <foreach>
+            <input path="body/SendMessage/SendMessageAisInput/headers"/>
+            <output path="headers/HTTPHeader/header"/>
+            <move>
+                <input path="name"/>
+                <output path="name"/>
+            </move>
+            <move>
+                <input path="value"/>
+                <output path="value"/>
+            </move>
+        </foreach>
+        <move>
+            <input path="body/SendMessage/SendMessageAisInput/loggingDetails/serviceName"/>
+            <output path="context/shared/serviceName"/>
+        </move>
+    </mappingDeclaration>
+</mappingRoot>

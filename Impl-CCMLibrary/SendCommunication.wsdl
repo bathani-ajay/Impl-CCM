@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?><wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="SendCommunication" targetNamespace="http://Impl-CCMLibrary/SendCommunication" xmlns:bons1="http://Impl-CCMLibrary" xmlns:tns="http://Impl-CCMLibrary/SendCommunication" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <wsdl:types>
+    <xsd:schema targetNamespace="http://Impl-CCMLibrary/SendCommunication">
+      <xsd:import namespace="http://Impl-CCMLibrary" schemaLocation="sendMessageOutputBO.xsd"/>
+      <xsd:import namespace="http://Impl-CCMLibrary" schemaLocation="sendMessageInputBO.xsd"/>
+      <xsd:element name="SendMessage">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="SendMessageInput" nillable="true" type="bons1:sendMessageInputBO"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="SendMessageResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="SendMessageOutput" nillable="true" type="bons1:sendMessageOutputBO"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:schema>
+  </wsdl:types>
+    <wsdl:message name="SendMessageRequestMsg">
+    <wsdl:part element="tns:SendMessage" name="SendMessageParameters"/>
+  </wsdl:message>
+    <wsdl:message name="SendMessageResponseMsg">
+    <wsdl:part element="tns:SendMessageResponse" name="SendMessageResult"/>
+  </wsdl:message>
+    <wsdl:portType name="SendCommunication">
+    <wsdl:operation name="SendMessage">
+      <wsdl:input message="tns:SendMessageRequestMsg" name="SendMessageRequest"/>
+      <wsdl:output message="tns:SendMessageResponseMsg" name="SendMessageResponse"/>
+    </wsdl:operation>
+  </wsdl:portType>
+</wsdl:definitions>

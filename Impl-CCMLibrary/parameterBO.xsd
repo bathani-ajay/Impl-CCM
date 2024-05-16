@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://Impl-CCMLibrary"
+	xmlns:bons0="http://Impl-CCMLibrary">
+	<xsd:include schemaLocation="titleBO.xsd"></xsd:include>
+	<xsd:complexType name="parameterBO">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" name="title"
+				type="bons0:titleBO">
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

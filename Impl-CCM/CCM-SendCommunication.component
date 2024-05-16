@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scdl:component xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mfc="http://www.ibm.com/xmlns/prod/websphere/scdl/mfc/6.0.0" xmlns:ns1="http://Impl-CCMLibrary/SendCommunicationService" xmlns:ns2="http://Impl-CCMLibrary/SendCommunication" xmlns:ns3="http://Impl-AuditLibrary/AuditLoggingServices" xmlns:scdl="http://www.ibm.com/xmlns/prod/websphere/scdl/6.0.0" xmlns:wsdl="http://www.ibm.com/xmlns/prod/websphere/scdl/wsdl/6.0.0" displayName="CCM-SendCommunication" name="CCM-SendCommunication">
+  <interfaces>
+    <interface xsi:type="wsdl:WSDLPortType" portType="ns1:SendCommunicationService"/>
+  </interfaces>
+  <references>
+    <reference name="SendCommunicationPartner">
+      <interface xsi:type="wsdl:WSDLPortType" portType="ns2:SendCommunication"/>
+      <wire target="CCM-SendMessage"/>
+    </reference>
+    <reference name="AuditLoggingServicesPartner">
+      <interface xsi:type="wsdl:WSDLPortType" portType="ns3:AuditLoggingServices"/>
+      <wire target="AuditImport"/>
+    </reference>
+  </references>
+  <implementation xsi:type="mfc:MediationFlowImplementation" mfcFile="CCM-SendCommunication.mfc"/>
+</scdl:component>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://Impl-CCMLibrary">
+	<xsd:complexType name="CCMSharedBO">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" name="lob" type="xsd:string"></xsd:element>
+			<xsd:element minOccurs="0" name="auditUniqueKey"
+				type="xsd:string">
+			</xsd:element>
+			<xsd:element minOccurs="0" name="failureString"
+				type="xsd:string">
+			</xsd:element>
+			<xsd:element minOccurs="0" name="applicationNumber"
+				type="xsd:string">
+			</xsd:element>
+			<xsd:element minOccurs="0" name="cookie"
+				type="xsd:string">
+			</xsd:element>
+			<xsd:element minOccurs="0" name="authURL"
+				type="xsd:anyURI">
+			</xsd:element>
+			<xsd:element minOccurs="0" name="serviceName"
+				type="xsd:string">
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

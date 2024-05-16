@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?><wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="TokenGenerationService" targetNamespace="http://Impl-CCMLibrary/TokenGenerationService" xmlns:bons1="http://NBDATA" xmlns:tns="http://Impl-CCMLibrary/TokenGenerationService" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <wsdl:types>
+    <xsd:schema targetNamespace="http://Impl-CCMLibrary/TokenGenerationService">
+      <xsd:import namespace="http://NBDATA" schemaLocation="TokenGenerationAisOutput.xsd"/>
+      <xsd:import namespace="http://NBDATA" schemaLocation="TokenGenerationAIsInput.xsd"/>
+      <xsd:element name="GenerateToken">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="TokenGenerationAisInput" nillable="true" type="bons1:TokenGenerationAIsInput"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="GenerateTokenResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="TokenGenerationAisOutput" nillable="true" type="bons1:TokenGenerationAisOutput"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:schema>
+  </wsdl:types>
+    <wsdl:message name="GenerateTokenRequestMsg">
+    <wsdl:part element="tns:GenerateToken" name="GenerateTokenParameters"/>
+  </wsdl:message>
+    <wsdl:message name="GenerateTokenResponseMsg">
+    <wsdl:part element="tns:GenerateTokenResponse" name="GenerateTokenResult"/>
+  </wsdl:message>
+    <wsdl:portType name="TokenGenerationService">
+    <wsdl:operation name="GenerateToken">
+      <wsdl:input message="tns:GenerateTokenRequestMsg" name="GenerateTokenRequest"/>
+      <wsdl:output message="tns:GenerateTokenResponseMsg" name="GenerateTokenResponse"/>
+    </wsdl:operation>
+  </wsdl:portType>
+</wsdl:definitions>

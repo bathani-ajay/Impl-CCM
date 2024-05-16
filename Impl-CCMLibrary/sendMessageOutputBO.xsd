@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://Impl-CCMLibrary"
+	xmlns:bons0="http://Impl-CCMLibrary">
+	<xsd:include schemaLocation="emailDataBO.xsd"></xsd:include>
+	<xsd:complexType name="sendMessageOutputBO">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" name="message"
+				type="xsd:string">
+			</xsd:element>
+			<xsd:element minOccurs="0" name="data"
+				type="bons0:emailDataBO">
+			</xsd:element>
+			<xsd:element minOccurs="0" name="statusCode"
+				type="xsd:string">
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

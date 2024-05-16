@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mediationFlow xmlns="http://www.ibm.com/xmlns/prod/websphere/2010/MediationFlow" xmlns:AuditLoggingServices="http://Impl-AuditLibrary/AuditLoggingServices" xmlns:XMLSchema="http://www.w3.org/2001/XMLSchema" xmlns:mfcex="http://www.ibm.com/xmlns/prod/websphere/2010/MediationFlowExtension" xmlns:ns1="http://Impl-CCMLibrary/TokenGenerationService" xmlns:ns2="http://Impl-CCMLibrary/TokenGeneration" name="CCM-TokenGeneration" targetNamespace="http://Impl-CCM/CCM-TokenGeneration">
+  <import location="TokenGenerationService.wsdl" namespace="http://Impl-CCMLibrary/TokenGenerationService"/>
+  <import location="TokenGeneration.wsdl" namespace="http://Impl-CCMLibrary/TokenGeneration"/>
+  <import location="AuditLoggingServices.wsdl" namespace="http://Impl-AuditLibrary/AuditLoggingServices"/>
+  <promotedProperty name="ServiceInvoke1.retryOn" group="Impl-CCM.CCM-TokenGeneration" value="0"/>
+  <promotedProperty name="ServiceInvoke1.retryCount" group="Impl-CCM.CCM-TokenGeneration" value="0"/>
+  <promotedProperty name="ServiceInvoke1.retryDelay" group="Impl-CCM.CCM-TokenGeneration" value="0"/>
+  <promotedProperty name="ServiceInvoke1.retryOn1" group="Impl-CCM.CCM-TokenGeneration" value="0"/>
+  <promotedProperty name="ServiceInvoke1.retryCount1" group="Impl-CCM.CCM-TokenGeneration" value="0"/>
+  <promotedProperty name="ServiceInvoke1.retryDelay1" group="Impl-CCM.CCM-TokenGeneration" value="0"/>
+  <promotedProperty name="ServiceInvoke1.retryOn2" group="Impl-CCM.CCM-TokenGeneration" value="0"/>
+  <promotedProperty name="ServiceInvoke1.retryCount2" group="Impl-CCM.CCM-TokenGeneration" value="0"/>
+  <promotedProperty name="ServiceInvoke1.retryDelay2" group="Impl-CCM.CCM-TokenGeneration" value="0"/>
+  <reference name="TokenGenerationPartner" portType="ns2:TokenGeneration"/>
+  <reference name="AuditLoggingServicesPartner" portType="AuditLoggingServices:AuditLoggingServices"/>
+  <interface portType="ns1:TokenGenerationService">
+    <operation name="GenerateToken">
+      <requestFlow mfcex:autoLayout="false">
+        <node displayName="GenerateToken : TokenGenerationService" name="TokenGenerationService_GenerateToken_Input" type="Input" mfcex:x="10" mfcex:y="392">
+          <property name="sharedContext" value="{http://Impl-CCMLibrary}CCMSharedBO"/>
+          <outputTerminal type="ns1:GenerateTokenRequestMsg">
+            <wire targetNode="Map_Input_Request"/>
+          </outputTerminal>
+        </node>
+        <node displayName="GenerateToken : TokenGenerationService" name="TokenGenerationService_GenerateToken_InputResponse" type="InputResponse" mfcex:x="1151" mfcex:y="20">
+          <inputTerminal type="ns1:GenerateTokenResponseMsg"/>
+        </node>
+        <node name="GenerateToken" type="ServiceInvoke" mfcex:x="559" mfcex:y="204">
+          <property name="referenceName" value="TokenGenerationPartner"/>
+          <property name="operationName" value="GenerateToken"/>
+          <property name="retryOn" promotedPropertyGroup="Impl-CCM.CCM-TokenGeneration" promotedPropertyName="ServiceInvoke1.retryOn"/>
+          <property name="retryCount" promotedPropertyGroup="Impl-CCM.CCM-TokenGeneration" promotedPropertyName="ServiceInvoke1.retryCount"/>
+          <property name="retryDelay" promotedPropertyGroup="Impl-CCM.CCM-TokenGeneration" promotedPropertyName="ServiceInvoke1.retryDelay"/>
+          <inputTerminal type="ns2:GenerateTokenRequestMsg"/>
+          <outputTerminal type="ns2:GenerateTokenResponseMsg">
+            <wire targetNode="FanOut2"/>
+          </outputTerminal>
+          <outputTerminal name="timeout" type="ns2:GenerateTokenRequestMsg">
+            <wire targetNode="FanOut3"/>
+          </outputTerminal>
+          <failTerminal>
+            <wire targetNode="FanOut3"/>
+          </failTerminal>
+        </node>
+        <node name="Log_Request" type="ServiceInvoke" mfcex:x="559" mfcex:y="392">
+          <property name="referenceName" value="AuditLoggingServicesPartner"/>
+          <property name="operationName" value="upsertServiceLog"/>
+          <property name="retryOn" promotedPropertyGroup="Impl-CCM.CCM-TokenGeneration" promotedPropertyName="ServiceInvoke1.retryOn1"/>
+          <property name="retryCount" promotedPropertyGroup="Impl-CCM.CCM-TokenGeneration" promotedPropertyName="ServiceInvoke1.retryCount1"/>
+          <property name="retryDelay" promotedPropertyGroup="Impl-CCM.CCM-TokenGeneration" promotedPropertyName="ServiceInvoke1.retryDelay1"/>
+          <inputTerminal type="AuditLoggingServices:upsertServiceLogRequestMsg"/>
+          <outputTerminal type="AuditLoggingServices:upsertServiceLogResponseMsg">
+            <wire targetNode="Map_Log_Response"/>
+          </outputTerminal>
+          <outputTerminal name="timeout" type="AuditLoggingServices:upsertServiceLogRequestMsg">
+            <wire targetNode="Stop1"/>
+          </outputTerminal>
+          <failTerminal>
+            <wire targetNode="Stop1"/>
+          </failTerminal>
+        </node>
+        <node name="Map_Input_Request" type="XSLTransformation" mfcex:x="231" mfcex:y="392">
+          <property name="root" value="/"/>
+          <property name="XSLTransform" value="xslt/Map_Input_Request_req_1.xsl"/>
+          <property name="XMXMap" value="xslt/Map_Input_Request_req_1.map"/>
+          <property name="SMOVersion" value="SMO61"/>
+          <inputTerminal type="ns1:GenerateTokenRequestMsg"/>
+          <outputTerminal type="ns1:GenerateTokenRequestMsg">
+            <wire targetNode="FanOut1"/>
+          </outputTerminal>
+          <failTerminal/>
+        </node>
+        <node name="FanOut1" type="FanOut" mfcex:x="356" mfcex:y="392">
+          <inputTerminal/>
+          <outputTerminal type="ns1:GenerateTokenRequestMsg">
+            <wire targetNode="Map_Log_Request"/>
+            <wire targetNode="Map_Token_Input"/>
+          </outputTerminal>
+          <outputTerminal explicitType="false" name="noOccurrences" type="ns1:GenerateTokenRequestMsg"/>
+          <failTerminal/>
+        </node>
+        <node name="Map_Log_Request" type="XSLTransformation" mfcex:x="442" mfcex:y="392">
+          <property name="root" value="/"/>
+          <property name="XSLTransform" value="xslt/Map_Log_Request_req_1.xsl"/>
+          <property name="XMXMap" value="xslt/Map_Log_Request_req_1.map"/>
+          <property name="SMOVersion" value="SMO61"/>
+          <inputTerminal type="ns1:GenerateTokenRequestMsg"/>
+          <outputTerminal type="AuditLoggingServices:upsertServiceLogRequestMsg">
+            <wire targetNode="Log_Request"/>
+          </outputTerminal>
+          <failTerminal/>
+        </node>
+        <node name="Map_Log_Response" type="XSLTransformation" mfcex:x="664" mfcex:y="332">
+          <property name="root" value="/"/>
+          <property name="XSLTransform" value="xslt/Map_Log_Response_req_1.xsl"/>
+          <property name="XMXMap" value="xslt/Map_Log_Response_req_1.map"/>
+          <property name="SMOVersion" value="SMO61"/>
+          <inputTerminal type="AuditLoggingServices:upsertServiceLogResponseMsg"/>
+          <outputTerminal type="AuditLoggingServices:upsertServiceLogResponseMsg">
+            <wire targetNode="Stop1"/>
+          </outputTerminal>
+          <failTerminal>
+            <wire targetNode="Stop1"/>
+          </failTerminal>
+        </node>
+        <node name="Stop1" type="Stop" mfcex:x="814" mfcex:y="404">
+          <inputTerminal type="XMLSchema:anyType"/>
+        </node>
+        <node name="Map_Token_Input" type="XSLTransformation" mfcex:x="442" mfcex:y="204">
+          <property name="root" value="/"/>
+          <property name="XSLTransform" value="xslt/Map_Token_Input_req_1.xsl"/>
+          <property name="XMXMap" value="xslt/Map_Token_Input_req_1.map"/>
+          <property name="SMOVersion" value="SMO61"/>
+          <inputTerminal type="ns1:GenerateTokenRequestMsg"/>
+          <outputTerminal type="ns2:GenerateTokenRequestMsg">
+            <wire targetNode="GenerateToken"/>
+          </outputTerminal>
+          <failTerminal/>
+        </node>
+        <node name="FanOut2" type="FanOut" mfcex:x="664" mfcex:y="124">
+          <inputTerminal/>
+          <outputTerminal type="ns2:GenerateTokenResponseMsg">
+            <wire targetNode="Map_Token_Output"/>
+            <wire targetNode="Map_Success_Response"/>
+          </outputTerminal>
+          <outputTerminal explicitType="false" name="noOccurrences" type="ns2:GenerateTokenResponseMsg"/>
+          <failTerminal/>
+        </node>
+        <node name="FanOut3" type="FanOut" mfcex:x="664" mfcex:y="228">
+          <inputTerminal/>
+          <outputTerminal type="ns2:GenerateTokenResponseMsg">
+            <wire targetNode="Map_Failure_Output"/>
+            <wire targetNode="Map_Token_Output"/>
+          </outputTerminal>
+          <outputTerminal explicitType="false" name="noOccurrences" type="ns2:GenerateTokenResponseMsg"/>
+          <failTerminal/>
+        </node>
+        <node name="Log_Response" type="ServiceInvoke" mfcex:x="959" mfcex:y="228">
+          <property name="referenceName" value="AuditLoggingServicesPartner"/>
+          <property name="operationName" value="upsertServiceLog"/>
+          <property name="retryOn" promotedPropertyGroup="Impl-CCM.CCM-TokenGeneration" promotedPropertyName="ServiceInvoke1.retryOn2"/>
+          <property name="retryCount" promotedPropertyGroup="Impl-CCM.CCM-TokenGeneration" promotedPropertyName="ServiceInvoke1.retryCount2"/>
+          <property name="retryDelay" promotedPropertyGroup="Impl-CCM.CCM-TokenGeneration" promotedPropertyName="ServiceInvoke1.retryDelay2"/>
+          <inputTerminal type="AuditLoggingServices:upsertServiceLogRequestMsg"/>
+          <outputTerminal type="AuditLoggingServices:upsertServiceLogResponseMsg">
+            <wire targetNode="Stop2"/>
+          </outputTerminal>
+          <outputTerminal name="timeout" type="AuditLoggingServices:upsertServiceLogRequestMsg">
+            <wire targetNode="Stop2"/>
+          </outputTerminal>
+          <failTerminal>
+            <wire targetNode="Stop2"/>
+          </failTerminal>
+        </node>
+        <node name="Map_Token_Output" type="XSLTransformation" mfcex:x="814" mfcex:y="20">
+          <property name="root" value="/"/>
+          <property name="XSLTransform" value="xslt/Map_Token_Output_req_1.xsl"/>
+          <property name="XMXMap" value="xslt/Map_Token_Output_req_1.map"/>
+          <property name="SMOVersion" value="SMO61"/>
+          <inputTerminal type="ns2:GenerateTokenResponseMsg"/>
+          <outputTerminal type="ns1:GenerateTokenResponseMsg">
+            <wire targetNode="TokenGenerationService_GenerateToken_InputResponse"/>
+          </outputTerminal>
+          <failTerminal/>
+        </node>
+        <node name="Map_Success_Response" type="XSLTransformation" mfcex:x="814" mfcex:y="124">
+          <property name="root" value="/"/>
+          <property name="XSLTransform" value="xslt/Map_Success_Response_req_1.xsl"/>
+          <property name="XMXMap" value="xslt/Map_Success_Response_req_1.map"/>
+          <property name="SMOVersion" value="SMO61"/>
+          <inputTerminal type="ns2:GenerateTokenResponseMsg"/>
+          <outputTerminal type="AuditLoggingServices:upsertServiceLogRequestMsg">
+            <wire targetNode="Log_Response"/>
+          </outputTerminal>
+          <failTerminal/>
+        </node>
+        <node name="Map_Failure_Output" type="XSLTransformation" mfcex:x="814" mfcex:y="228">
+          <property name="root" value="/"/>
+          <property name="XSLTransform" value="xslt/Map_Failure_Output_req_1.xsl"/>
+          <property name="XMXMap" value="xslt/Map_Failure_Output_req_1.map"/>
+          <property name="SMOVersion" value="SMO61"/>
+          <inputTerminal type="ns2:GenerateTokenResponseMsg"/>
+          <outputTerminal type="AuditLoggingServices:upsertServiceLogRequestMsg">
+            <wire targetNode="Log_Response"/>
+          </outputTerminal>
+          <failTerminal/>
+        </node>
+        <node name="Stop2" type="Stop" mfcex:x="1070" mfcex:y="240">
+          <inputTerminal type="XMLSchema:anyType"/>
+        </node>
+      </requestFlow>
+      <errorFlow>
+        <node displayName="GenerateToken : TokenGenerationService" name="TokenGenerationService_GenerateToken_ErrorInput" type="ErrorInput">
+          <outputTerminal name="catchAll" type="XMLSchema:anyType"/>
+        </node>
+        <node displayName="GenerateToken : TokenGenerationService" name="TokenGenerationService_GenerateToken_InputResponse" type="InputResponse">
+          <inputTerminal type="ns1:GenerateTokenResponseMsg"/>
+        </node>
+      </errorFlow>
+    </operation>
+  </interface>
+</mediationFlow>

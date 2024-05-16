@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mediationFlow xmlns="http://www.ibm.com/xmlns/prod/websphere/2010/MediationFlow" xmlns:XMLSchema="http://www.w3.org/2001/XMLSchema" xmlns:ns1="http://Impl-CCMLibrary/SendCommunication" xmlns:ns1_1="http://Impl-AuditLibrary/AuditLoggingServices" xmlns:ns1_2="http://Impl-CCMLibrary/SendCommunicationService" name="CCM-SendCommunication" targetNamespace="http://Impl-CCM/CCM-SendCommunication">
+  <import location="SendCommunicationService.wsdl" namespace="http://Impl-CCMLibrary/SendCommunicationService"/>
+  <import location="SendCommunication.wsdl" namespace="http://Impl-CCMLibrary/SendCommunication"/>
+  <import location="AuditLoggingServices.wsdl" namespace="http://Impl-AuditLibrary/AuditLoggingServices"/>
+  <promotedProperty name="ServiceInvoke1.retryOn" group="Impl-CCM.CCM-SendCommunication" value="0"/>
+  <promotedProperty name="ServiceInvoke1.retryCount" group="Impl-CCM.CCM-SendCommunication" value="0"/>
+  <promotedProperty name="ServiceInvoke1.retryDelay" group="Impl-CCM.CCM-SendCommunication" value="0"/>
+  <promotedProperty name="ServiceInvoke1.retryOn1" group="Impl-CCM.CCM-SendCommunication" value="0"/>
+  <promotedProperty name="ServiceInvoke1.retryCount1" group="Impl-CCM.CCM-SendCommunication" value="0"/>
+  <promotedProperty name="ServiceInvoke1.retryDelay1" group="Impl-CCM.CCM-SendCommunication" value="0"/>
+  <promotedProperty name="ServiceInvoke1.retryOn2" group="Impl-CCM.CCM-SendCommunication" value="0"/>
+  <promotedProperty name="ServiceInvoke1.retryCount2" group="Impl-CCM.CCM-SendCommunication" value="0"/>
+  <promotedProperty name="ServiceInvoke1.retryDelay2" group="Impl-CCM.CCM-SendCommunication" value="0"/>
+  <reference name="SendCommunicationPartner" portType="ns1:SendCommunication"/>
+  <reference name="AuditLoggingServicesPartner" portType="ns1_1:AuditLoggingServices"/>
+  <interface portType="ns1_2:SendCommunicationService">
+    <operation name="SendMessage">
+      <requestFlow>
+        <node displayName="SendMessage : SendCommunicationService" name="SendCommunicationService_SendMessage_Input" type="Input">
+          <property name="sharedContext" value="{http://Impl-CCMLibrary}CCMSharedBO"/>
+          <outputTerminal type="ns1_2:SendMessageRequestMsg">
+            <wire targetNode="Map_Input_Request"/>
+          </outputTerminal>
+        </node>
+        <node displayName="SendMessage : SendCommunicationService" name="SendCommunicationService_SendMessage_InputResponse" type="InputResponse">
+          <inputTerminal type="ns1_2:SendMessageResponseMsg"/>
+        </node>
+        <node name="Send_Email" type="ServiceInvoke">
+          <property name="referenceName" value="SendCommunicationPartner"/>
+          <property name="operationName" value="SendMessage"/>
+          <property name="retryOn" promotedPropertyGroup="Impl-CCM.CCM-SendCommunication" promotedPropertyName="ServiceInvoke1.retryOn"/>
+          <property name="retryCount" promotedPropertyGroup="Impl-CCM.CCM-SendCommunication" promotedPropertyName="ServiceInvoke1.retryCount"/>
+          <property name="retryDelay" promotedPropertyGroup="Impl-CCM.CCM-SendCommunication" promotedPropertyName="ServiceInvoke1.retryDelay"/>
+          <inputTerminal type="ns1:SendMessageRequestMsg"/>
+          <outputTerminal type="ns1:SendMessageResponseMsg">
+            <wire targetNode="FanOut2"/>
+          </outputTerminal>
+          <outputTerminal name="timeout" type="ns1:SendMessageRequestMsg">
+            <wire targetNode="FanOut3"/>
+          </outputTerminal>
+          <failTerminal>
+            <wire targetNode="FanOut3"/>
+          </failTerminal>
+        </node>
+        <node name="Log_Request" type="ServiceInvoke">
+          <property name="referenceName" value="AuditLoggingServicesPartner"/>
+          <property name="operationName" value="upsertServiceLog"/>
+          <property name="retryOn" promotedPropertyGroup="Impl-CCM.CCM-SendCommunication" promotedPropertyName="ServiceInvoke1.retryOn1"/>
+          <property name="retryCount" promotedPropertyGroup="Impl-CCM.CCM-SendCommunication" promotedPropertyName="ServiceInvoke1.retryCount1"/>
+          <property name="retryDelay" promotedPropertyGroup="Impl-CCM.CCM-SendCommunication" promotedPropertyName="ServiceInvoke1.retryDelay1"/>
+          <inputTerminal type="ns1_1:upsertServiceLogRequestMsg"/>
+          <outputTerminal type="ns1_1:upsertServiceLogResponseMsg">
+            <wire targetNode="Map_Output_Log"/>
+          </outputTerminal>
+          <outputTerminal name="timeout" type="ns1_1:upsertServiceLogRequestMsg">
+            <wire targetNode="Stop1"/>
+          </outputTerminal>
+          <failTerminal>
+            <wire targetNode="Stop1"/>
+          </failTerminal>
+        </node>
+        <node name="Map_Input_Request" type="XSLTransformation">
+          <property name="root" value="/"/>
+          <property name="XSLTransform" value="xslt/Map_Input_Request_req_2.xsl"/>
+          <property name="XMXMap" value="xslt/Map_Input_Request_req_2.map"/>
+          <property name="SMOVersion" value="SMO61"/>
+          <inputTerminal type="ns1_2:SendMessageRequestMsg"/>
+          <outputTerminal type="ns1_2:SendMessageRequestMsg">
+            <wire targetNode="FanOut1"/>
+          </outputTerminal>
+          <failTerminal/>
+        </node>
+        <node name="FanOut1" type="FanOut">
+          <inputTerminal/>
+          <outputTerminal type="ns1_2:SendMessageRequestMsg">
+            <wire targetNode="Map_Input_Log"/>
+            <wire targetNode="Map_Send_Email_Input"/>
+          </outputTerminal>
+          <outputTerminal explicitType="false" name="noOccurrences" type="ns1_2:SendMessageRequestMsg"/>
+          <failTerminal/>
+        </node>
+        <node name="Map_Input_Log" type="XSLTransformation">
+          <property name="root" value="/"/>
+          <property name="XSLTransform" value="xslt/Map_Input_Log_req_1.xsl"/>
+          <property name="XMXMap" value="xslt/Map_Input_Log_req_1.map"/>
+          <property name="SMOVersion" value="SMO61"/>
+          <inputTerminal type="ns1_2:SendMessageRequestMsg"/>
+          <outputTerminal type="ns1_1:upsertServiceLogRequestMsg">
+            <wire targetNode="Log_Request"/>
+          </outputTerminal>
+          <failTerminal/>
+        </node>
+        <node name="Map_Output_Log" type="XSLTransformation">
+          <property name="root" value="/"/>
+          <property name="XSLTransform" value="xslt/Map_Output_Log_req_1.xsl"/>
+          <property name="XMXMap" value="xslt/Map_Output_Log_req_1.map"/>
+          <property name="SMOVersion" value="SMO61"/>
+          <inputTerminal type="ns1_1:upsertServiceLogResponseMsg"/>
+          <outputTerminal type="ns1_1:upsertServiceLogResponseMsg">
+            <wire targetNode="Stop1"/>
+          </outputTerminal>
+          <failTerminal>
+            <wire targetNode="Stop1"/>
+          </failTerminal>
+        </node>
+        <node name="Stop1" type="Stop">
+          <inputTerminal type="XMLSchema:anyType"/>
+        </node>
+        <node name="Map_Send_Email_Input" type="XSLTransformation">
+          <property name="root" value="/"/>
+          <property name="XSLTransform" value="xslt/Map_Send_Email_Input_req_1.xsl"/>
+          <property name="XMXMap" value="xslt/Map_Send_Email_Input_req_1.map"/>
+          <property name="SMOVersion" value="SMO61"/>
+          <inputTerminal type="ns1_2:SendMessageRequestMsg"/>
+          <outputTerminal type="ns1:SendMessageRequestMsg">
+            <wire targetNode="Send_Email"/>
+          </outputTerminal>
+          <failTerminal/>
+        </node>
+        <node name="FanOut2" type="FanOut">
+          <inputTerminal/>
+          <outputTerminal type="ns1:SendMessageResponseMsg">
+            <wire targetNode="Map_Send_Email_Success_Response"/>
+            <wire targetNode="Map_Send_Email_Output"/>
+          </outputTerminal>
+          <outputTerminal explicitType="false" name="noOccurrences" type="ns1:SendMessageResponseMsg"/>
+          <failTerminal/>
+        </node>
+        <node name="FanOut3" type="FanOut">
+          <inputTerminal/>
+          <outputTerminal type="ns1:SendMessageResponseMsg">
+            <wire targetNode="Map_Send_Email_Failure_Response"/>
+            <wire targetNode="Map_Send_Email_Output"/>
+          </outputTerminal>
+          <outputTerminal explicitType="false" name="noOccurrences" type="ns1:SendMessageResponseMsg"/>
+          <failTerminal/>
+        </node>
+        <node name="Log_Response" type="ServiceInvoke">
+          <property name="referenceName" value="AuditLoggingServicesPartner"/>
+          <property name="operationName" value="upsertServiceLog"/>
+          <property name="retryOn" promotedPropertyGroup="Impl-CCM.CCM-SendCommunication" promotedPropertyName="ServiceInvoke1.retryOn2"/>
+          <property name="retryCount" promotedPropertyGroup="Impl-CCM.CCM-SendCommunication" promotedPropertyName="ServiceInvoke1.retryCount2"/>
+          <property name="retryDelay" promotedPropertyGroup="Impl-CCM.CCM-SendCommunication" promotedPropertyName="ServiceInvoke1.retryDelay2"/>
+          <inputTerminal type="ns1_1:upsertServiceLogRequestMsg"/>
+          <outputTerminal type="ns1_1:upsertServiceLogResponseMsg">
+            <wire targetNode="Stop2"/>
+          </outputTerminal>
+          <outputTerminal name="timeout" type="ns1_1:upsertServiceLogRequestMsg">
+            <wire targetNode="Stop2"/>
+          </outputTerminal>
+          <failTerminal>
+            <wire targetNode="Stop2"/>
+          </failTerminal>
+        </node>
+        <node name="Map_Send_Email_Success_Response" type="XSLTransformation">
+          <property name="root" value="/"/>
+          <property name="XSLTransform" value="xslt/Map_Send_Email_Success_Response_req_1.xsl"/>
+          <property name="XMXMap" value="xslt/Map_Send_Email_Success_Response_req_1.map"/>
+          <property name="SMOVersion" value="SMO61"/>
+          <inputTerminal type="ns1:SendMessageResponseMsg"/>
+          <outputTerminal type="ns1_1:upsertServiceLogRequestMsg">
+            <wire targetNode="Log_Response"/>
+          </outputTerminal>
+          <failTerminal/>
+        </node>
+        <node name="Map_Send_Email_Failure_Response" type="XSLTransformation">
+          <property name="root" value="/"/>
+          <property name="XSLTransform" value="xslt/Map_Send_Email_Failure_Response_req_1.xsl"/>
+          <property name="XMXMap" value="xslt/Map_Send_Email_Failure_Response_req_1.map"/>
+          <property name="SMOVersion" value="SMO61"/>
+          <inputTerminal type="ns1:SendMessageResponseMsg"/>
+          <outputTerminal type="ns1_1:upsertServiceLogRequestMsg">
+            <wire targetNode="Log_Response"/>
+          </outputTerminal>
+          <failTerminal/>
+        </node>
+        <node name="Stop2" type="Stop">
+          <inputTerminal type="XMLSchema:anyType"/>
+        </node>
+        <node name="Map_Send_Email_Output" type="XSLTransformation">
+          <property name="root" value="/"/>
+          <property name="XSLTransform" value="xslt/Map_Send_Email_Output_req_1.xsl"/>
+          <property name="XMXMap" value="xslt/Map_Send_Email_Output_req_1.map"/>
+          <property name="SMOVersion" value="SMO61"/>
+          <inputTerminal type="ns1:SendMessageResponseMsg"/>
+          <outputTerminal type="ns1_2:SendMessageResponseMsg">
+            <wire targetNode="SendCommunicationService_SendMessage_InputResponse"/>
+          </outputTerminal>
+          <failTerminal/>
+        </node>
+      </requestFlow>
+      <errorFlow>
+        <node displayName="SendMessage : SendCommunicationService" name="SendCommunicationService_SendMessage_ErrorInput" type="ErrorInput">
+          <outputTerminal name="catchAll" type="XMLSchema:anyType"/>
+        </node>
+        <node displayName="SendMessage : SendCommunicationService" name="SendCommunicationService_SendMessage_InputResponse" type="InputResponse">
+          <inputTerminal type="ns1_2:SendMessageResponseMsg"/>
+        </node>
+      </errorFlow>
+    </operation>
+  </interface>
+</mediationFlow>

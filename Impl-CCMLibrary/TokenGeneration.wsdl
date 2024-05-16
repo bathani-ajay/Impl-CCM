@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?><wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" name="TokenGeneration" targetNamespace="http://Impl-CCMLibrary/TokenGeneration" xmlns:bons1="http://Impl-CCMLibrary" xmlns:tns="http://Impl-CCMLibrary/TokenGeneration" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <wsdl:types>
+    <xsd:schema targetNamespace="http://Impl-CCMLibrary/TokenGeneration">
+      <xsd:import namespace="http://Impl-CCMLibrary" schemaLocation="TokenOutputBO.xsd"/>
+      <xsd:import namespace="http://Impl-CCMLibrary" schemaLocation="TokenInputBO.xsd"/>
+      <xsd:element name="GenerateToken">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="GenrateTokenInput" nillable="true" type="bons1:TokenInputBO"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="GenerateTokenResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="GenrateTokenOutput" nillable="true" type="bons1:TokenOutputBO"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:schema>
+  </wsdl:types>
+    <wsdl:message name="GenerateTokenRequestMsg">
+    <wsdl:part element="tns:GenerateToken" name="GenerateTokenParameters"/>
+  </wsdl:message>
+    <wsdl:message name="GenerateTokenResponseMsg">
+    <wsdl:part element="tns:GenerateTokenResponse" name="GenerateTokenResult"/>
+  </wsdl:message>
+    <wsdl:portType name="TokenGeneration">
+    <wsdl:operation name="GenerateToken">
+      <wsdl:input message="tns:GenerateTokenRequestMsg" name="GenerateTokenRequest"/>
+      <wsdl:output message="tns:GenerateTokenResponseMsg" name="GenerateTokenResponse"/>
+    </wsdl:operation>
+  </wsdl:portType>
+</wsdl:definitions>

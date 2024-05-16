@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?><mappingRoot xmlns="http://www.ibm.com/2008/ccl/Mapping" domainID="com.ibm.msl.mapping.xml" targetNamespace="http://Impl-CCM/xslt/Map_Send_Email_Success_Response_req_1" version="8.0.5.0" xmlns:map="http://Impl-CCM/xslt/Map_Send_Email_Success_Response_req_1">
+    <input correlationContext="" message="{http://Impl-CCMLibrary/SendCommunication}SendMessageResponseMsg" sharedContext="{http://Impl-CCMLibrary}CCMSharedBO" smoName="wsdl-primary" transientContext="" type="smo" types="" xpath="/"/>
+    <output correlationContext="" message="{http://Impl-AuditLibrary/AuditLoggingServices}upsertServiceLogRequestMsg" sharedContext="{http://Impl-CCMLibrary}CCMSharedBO" smoName="wsdl-primary" transientContext="" type="smo" types="" xpath="/"/>
+    <imports>
+        <import kind="java" location="com.tagic.hnb.Transform" namespace="xalan://com.tagic.hnb.Transform"/>
+    </imports>
+    <namespaces>
+        <namespace kind="supplement" prefix="io7" uri="http://www.ibm.com/xmlns/prod/websphere/http/sca/6.1.0"/>
+        <namespace kind="supplement" prefix="io6" uri="http://www.ibm.com/xmlns/prod/websphere/mq/sca/6.0.0"/>
+        <namespace kind="supplement" prefix="in" uri="http://Impl-CCMLibrary/SendCommunication"/>
+        <namespace kind="supplement" prefix="io" uri="http://www.w3.org/2005/08/addressing"/>
+        <namespace kind="supplement" prefix="io3" uri="http://Impl-CCMLibrary"/>
+        <namespace kind="supplement" prefix="in2" uri="wsdl.http://Impl-CCMLibrary/SendCommunication"/>
+        <namespace kind="supplement" prefix="io2" uri="http://www.w3.org/2003/05/soap-envelope"/>
+        <namespace kind="supplement" prefix="io5" uri="http://www.ibm.com/websphere/sibx/smo/v6.0.1"/>
+        <namespace kind="supplement" prefix="io4" uri="http://schemas.xmlsoap.org/ws/2004/08/addressing"/>
+        <namespace kind="supplement" prefix="out2" uri="http://Impl-AuditLibrary/AuditLoggingServices"/>
+        <namespace kind="supplement" prefix="out3" uri="http://NBHD"/>
+        <namespace kind="supplement" prefix="out" uri="wsdl.http://Impl-AuditLibrary/AuditLoggingServices"/>
+        <namespace kind="extension" prefix="Transform" uri="xalan://com.tagic.hnb.Transform"/>
+    </namespaces>
+    <generation engine="xslt2"/>
+    <mappingDeclaration name="Map_Send_Email_Success_Response_req_1">
+        <input namespace="http://www.ibm.com/websphere/sibx/smo/v6.0.1" path="smo"/>
+        <output namespace="http://www.ibm.com/websphere/sibx/smo/v6.0.1" path="smo"/>
+        <move>
+            <input path="context/shared" var="shared"/>
+            <output path="context/shared"/>
+        </move>
+        <move>
+            <input path="context/shared/auditUniqueKey"/>
+            <output path="body/upsertServiceLog/serviceLogRequest/serviceLogId"/>
+        </move>
+        <move>
+            <input path="context/shared/lob"/>
+            <output path="body/upsertServiceLog/serviceLogRequest/lob"/>
+        </move>
+        <condition>
+            <if>
+                <input path="body/SendMessageResponse/SendMessageOutput" var="SendMessageOutput"/>
+                <input path="body/SendMessageResponse/SendMessageOutput/message" var="message"/>
+                <output path="body/upsertServiceLog/serviceLogRequest/errorDetails"/>
+                <test lang="xpath">fn:boolean( $message)  and $message != 'Communication initiated for the requested channels'</test>
+                <customFunction lang="java" ref="Transform:transformXMLToJSON">
+                    <input path="$SendMessageOutput/." var="SendMessageOutput"/>
+                    <output path="."/>
+                    <param name="xmlNode" value="$SendMessageOutput"/>
+                </customFunction>
+            </if>
+            <else>
+                <input path="body/SendMessageResponse/SendMessageOutput"/>
+                <output path="body/upsertServiceLog/serviceLogRequest/response"/>
+                <customFunction lang="java" ref="Transform:transformXMLToJSON">
+                    <input path="." var="SendMessageOutput1"/>
+                    <output path="."/>
+                    <param name="xmlNode" value="$SendMessageOutput1"/>
+                </customFunction>
+            </else>
+        </condition>
+    </mappingDeclaration>
+</mappingRoot>

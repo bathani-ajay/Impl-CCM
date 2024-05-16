@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?><mappingRoot xmlns="http://www.ibm.com/2008/ccl/Mapping" domainID="com.ibm.msl.mapping.xml" targetNamespace="http://Impl-CCM/xslt/Map_Log_Request_req_1" version="8.0.5.0" xmlns:map="http://Impl-CCM/xslt/Map_Log_Request_req_1">
+    <input correlationContext="" message="{http://Impl-CCMLibrary/TokenGenerationService}GenerateTokenRequestMsg" sharedContext="{http://Impl-CCMLibrary}CCMSharedBO" smoName="wsdl-primary" transientContext="" type="smo" types="" xpath="/"/>
+    <output correlationContext="" message="{http://Impl-AuditLibrary/AuditLoggingServices}upsertServiceLogRequestMsg" sharedContext="{http://Impl-CCMLibrary}CCMSharedBO" smoName="wsdl-primary" transientContext="" type="smo" types="" xpath="/"/>
+    <imports>
+        <import kind="java" location="com.tagic.hnb.Transform" namespace="xalan://com.tagic.hnb.Transform"/>
+    </imports>
+    <namespaces>
+        <namespace kind="supplement" prefix="io7" uri="http://www.ibm.com/xmlns/prod/websphere/http/sca/6.1.0"/>
+        <namespace kind="supplement" prefix="io6" uri="http://www.ibm.com/xmlns/prod/websphere/mq/sca/6.0.0"/>
+        <namespace kind="supplement" prefix="in" uri="wsdl.http://Impl-CCMLibrary/TokenGenerationService"/>
+        <namespace kind="supplement" prefix="io" uri="http://www.w3.org/2005/08/addressing"/>
+        <namespace kind="supplement" prefix="io3" uri="http://Impl-CCMLibrary"/>
+        <namespace kind="supplement" prefix="in2" uri="http://NBDATA"/>
+        <namespace kind="supplement" prefix="io2" uri="http://www.w3.org/2003/05/soap-envelope"/>
+        <namespace kind="supplement" prefix="io5" uri="http://www.ibm.com/websphere/sibx/smo/v6.0.1"/>
+        <namespace kind="supplement" prefix="io4" uri="http://schemas.xmlsoap.org/ws/2004/08/addressing"/>
+        <namespace kind="supplement" prefix="in3" uri="http://Impl-CCMLibrary/TokenGenerationService"/>
+        <namespace kind="supplement" prefix="out2" uri="http://Impl-AuditLibrary/AuditLoggingServices"/>
+        <namespace kind="supplement" prefix="out3" uri="http://NBHD"/>
+        <namespace kind="supplement" prefix="out" uri="wsdl.http://Impl-AuditLibrary/AuditLoggingServices"/>
+        <namespace kind="extension" prefix="Transform" uri="xalan://com.tagic.hnb.Transform"/>
+    </namespaces>
+    <generation engine="xslt2"/>
+    <mappingDeclaration name="Map_Log_Request_req_1">
+        <input namespace="http://www.ibm.com/websphere/sibx/smo/v6.0.1" path="smo"/>
+        <output namespace="http://www.ibm.com/websphere/sibx/smo/v6.0.1" path="smo"/>
+        <move>
+            <input path="context/shared"/>
+            <output path="context/shared"/>
+        </move>
+        <move>
+            <input path="headers/HTTPHeader"/>
+            <output path="headers/HTTPHeader"/>
+        </move>
+        <customFunction lang="java" ref="Transform:transformXMLToJSON">
+            <input path="body/GenerateToken/TokenGenerationAisInput" var="TokenGenerationAisInput"/>
+            <output path="body/upsertServiceLog/serviceLogRequest/request"/>
+            <param name="xmlNode" value="$TokenGenerationAisInput"/>
+        </customFunction>
+        <assign value="OUT">
+            <output path="body/upsertServiceLog/serviceLogRequest/serviceType"/>
+        </assign>
+        <assign value="PACE">
+            <output path="body/upsertServiceLog/serviceLogRequest/createdBy"/>
+        </assign>
+        <move>
+            <input path="body/GenerateToken/TokenGenerationAisInput/loggingDetails/lob"/>
+            <output path="body/upsertServiceLog/serviceLogRequest/lob"/>
+        </move>
+        <move>
+            <input path="body/GenerateToken/TokenGenerationAisInput/loggingDetails/applicationNo"/>
+            <output path="body/upsertServiceLog/serviceLogRequest/caseNumber"/>
+        </move>
+        <assign value="CCM-Token Generation Service">
+            <output path="body/upsertServiceLog/serviceLogRequest/serviceName"/>
+        </assign>
+        <assign value="CCM">
+            <output path="body/upsertServiceLog/serviceLogRequest/targetSystem"/>
+        </assign>
+    </mappingDeclaration>
+</mappingRoot>

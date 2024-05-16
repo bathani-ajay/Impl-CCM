@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?><mappingRoot xmlns="http://www.ibm.com/2008/ccl/Mapping" domainID="com.ibm.msl.mapping.xml" targetNamespace="http://Impl-CCM/xslt/Map_Token_Output_req_1" version="8.0.5.0" xmlns:map="http://Impl-CCM/xslt/Map_Token_Output_req_1">
+    <input correlationContext="" message="{http://Impl-CCMLibrary/TokenGeneration}GenerateTokenResponseMsg" sharedContext="{http://Impl-CCMLibrary}CCMSharedBO" smoName="wsdl-primary" transientContext="" type="smo" types="" xpath="/"/>
+    <output correlationContext="" message="{http://Impl-CCMLibrary/TokenGenerationService}GenerateTokenResponseMsg" sharedContext="{http://Impl-CCMLibrary}CCMSharedBO" smoName="wsdl-primary" transientContext="" type="smo" types="" xpath="/"/>
+    <namespaces>
+        <namespace kind="supplement" prefix="io7" uri="http://www.ibm.com/xmlns/prod/websphere/http/sca/6.1.0"/>
+        <namespace kind="supplement" prefix="io6" uri="http://www.ibm.com/xmlns/prod/websphere/mq/sca/6.0.0"/>
+        <namespace kind="supplement" prefix="in" uri="wsdl.http://Impl-CCMLibrary/TokenGeneration"/>
+        <namespace kind="supplement" prefix="io" uri="http://www.w3.org/2005/08/addressing"/>
+        <namespace kind="supplement" prefix="io3" uri="http://Impl-CCMLibrary"/>
+        <namespace kind="supplement" prefix="in2" uri="http://Impl-CCMLibrary/TokenGeneration"/>
+        <namespace kind="supplement" prefix="io2" uri="http://www.w3.org/2003/05/soap-envelope"/>
+        <namespace kind="supplement" prefix="io5" uri="http://www.ibm.com/websphere/sibx/smo/v6.0.1"/>
+        <namespace kind="supplement" prefix="io4" uri="http://schemas.xmlsoap.org/ws/2004/08/addressing"/>
+        <namespace kind="supplement" prefix="out2" uri="http://NBDATA"/>
+        <namespace kind="supplement" prefix="out3" uri="http://Impl-CCMLibrary/TokenGenerationService"/>
+        <namespace kind="supplement" prefix="out" uri="wsdl.http://Impl-CCMLibrary/TokenGenerationService"/>
+    </namespaces>
+    <generation engine="xslt2"/>
+    <mappingDeclaration name="Map_Token_Output_req_1">
+        <input namespace="http://www.ibm.com/websphere/sibx/smo/v6.0.1" path="smo"/>
+        <output namespace="http://www.ibm.com/websphere/sibx/smo/v6.0.1" path="smo"/>
+        <condition>
+            <if>
+                <input path="body/GenerateTokenResponse/GenrateTokenOutput/access_token" var="access_token"/>
+                <output path="body/GenerateTokenResponse/TokenGenerationAisOutput"/>
+                <test lang="xpath">fn:boolean( $access_token)  and $access_token != ''</test>
+                <move>
+                    <input path="$access_token/." var="access_token1"/>
+                    <output path="response/data"/>
+                </move>
+                <assign value="200">
+                    <output path="response/status"/>
+                </assign>
+            </if>
+            <elseif>
+                <input path="context/failInfo/failureString" var="failureString"/>
+                <output path="body/GenerateTokenResponse/TokenGenerationAisOutput"/>
+                <test lang="xpath">fn:boolean($failureString) and $failureString != ''</test>
+                <assign value="400">
+                    <output path="response/error/code"/>
+                </assign>
+                <assign value="Error in Token Generation">
+                    <output path="response/error/message"/>
+                </assign>
+                <assign value="400">
+                    <output path="response/status"/>
+                </assign>
+            </elseif>
+            <else>
+                <input path="body/GenerateTokenResponse/GenrateTokenOutput"/>
+                <output path="body/GenerateTokenResponse/TokenGenerationAisOutput"/>
+                <assign value="400">
+                    <output path="response/status"/>
+                </assign>
+                <assign value="400">
+                    <output path="response/error/code"/>
+                </assign>
+                <assign value="Invalid URL/Parameters">
+                    <output path="response/error/message"/>
+                </assign>
+            </else>
+        </condition>
+    </mappingDeclaration>
+</mappingRoot>

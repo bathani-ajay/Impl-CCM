@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://Impl-CCMLibrary"
+	xmlns:bons0="http://Impl-CCMLibrary">
+	<xsd:include schemaLocation="parameterBO.xsd"></xsd:include>
+	<xsd:include schemaLocation="emailBO.xsd"></xsd:include>
+	<xsd:complexType name="sendMessageInputBO">
+		<xsd:sequence>
+			<xsd:element minOccurs="0" name="email"
+				type="bons0:emailBO">
+			</xsd:element>
+			<xsd:element minOccurs="0" name="parameter"
+				type="bons0:parameterBO">
+			</xsd:element>
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>
